@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net"
@@ -10,6 +11,18 @@ import (
 )
 
 type server struct{}
+
+func (*server) Sum(ctx context.Context, req *sumpb.SumRequest) (*sumpb.SumResponse, error) {
+	fmt.Printf("Greet function was invoked with %w\n", req)
+	a := req.GetSum().GetA()
+	b := req.GetSum().GetB()
+
+	result := a + b
+	res := &sumpb.SumResponse{
+		Result: result,
+	}
+	return res, nil
+}
 
 func main() {
 	fmt.Println("Hello world")
