@@ -54,15 +54,6 @@ func (*server) PrimeNumberDecomposition(req *calculatorpb.PrimeNumberRequest, st
 			k = k + 1
 		}
 	}
-	// for i := 0; i < 10; i++ {
-	// 	result := num
-
-	// 	res := &calculatorpb.PrimeNumberResponse{
-	// 		Result: result,
-	// 	}
-	// 	stream.Send(res)
-	// 	time.Sleep(1000 * time.Millisecond)
-	// }
 	return nil
 
 }
