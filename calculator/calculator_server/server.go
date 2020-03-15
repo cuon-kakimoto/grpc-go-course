@@ -31,15 +31,38 @@ func (*server) PrimeNumberDecomposition(req *calculatorpb.PrimeNumberRequest, st
 
 	num := req.GetNumber()
 
-	for i := 0; i < 10; i++ {
-		result := num
-
-		res := &calculatorpb.PrimeNumberResponse{
-			Result: result,
+	var k int64
+	k = 2
+	N := num
+	for {
+		if N <= 1 {
+			break
 		}
-		stream.Send(res)
-		time.Sleep(1000 * time.Millisecond)
+
+		if N%k == 0 {
+			fmt.Printf("prime number div %v\n", k)
+			// stream.Send(res)
+
+			N = N / k
+			res := &calculatorpb.PrimeNumberResponse{
+				Result: k,
+			}
+			stream.Send(res)
+			time.Sleep(1000 * time.Millisecond)
+
+		} else {
+			k = k + 1
+		}
 	}
+	// for i := 0; i < 10; i++ {
+	// 	result := num
+
+	// 	res := &calculatorpb.PrimeNumberResponse{
+	// 		Result: result,
+	// 	}
+	// 	stream.Send(res)
+	// 	time.Sleep(1000 * time.Millisecond)
+	// }
 	return nil
 
 }
