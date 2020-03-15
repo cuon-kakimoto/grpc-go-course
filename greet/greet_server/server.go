@@ -46,10 +46,10 @@ func (*server) GreetManyTimes(req *greetpb.GreetManyTimesRequest, stream greetpb
 func (*server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
 	fmt.Printf("LongGreet function was invoked with as streaming request")
 
-	result := "Hello "
+	result := ""
 	for {
 		req, err := stream.Recv()
-		if err != io.EOF {
+		if err == io.EOF {
 			// we have finished reading the client stream.
 			return stream.SendAndClose(&greetpb.LongGreetResponse{
 				Result: result,
@@ -61,7 +61,7 @@ func (*server) LongGreet(stream greetpb.GreetService_LongGreetServer) error {
 		}
 		firstName := req.GetGreeting().GetFirstName()
 
-		result += "Hello" + firstName + "!"
+		result += "Hello " + firstName + "! "
 	}
 }
 
