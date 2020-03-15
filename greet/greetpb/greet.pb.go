@@ -318,7 +318,7 @@ func init() {
 func init() { proto.RegisterFile("greet/greetpb/greet.proto", fileDescriptor_fe6f881da19a2871) }
 
 var fileDescriptor_fe6f881da19a2871 = []byte{
-	// 287 bytes of a gzipped FileDescriptorProto
+	// 289 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x92, 0x4c, 0x2f, 0x4a, 0x4d,
 	0x2d, 0xd1, 0x07, 0x93, 0x05, 0x49, 0x10, 0x5a, 0xaf, 0xa0, 0x28, 0xbf, 0x24, 0x5f, 0x88, 0x15,
 	0xcc, 0x51, 0x72, 0xe3, 0xe2, 0x70, 0x07, 0x31, 0x32, 0xf3, 0xd2, 0x85, 0x64, 0xb9, 0xb8, 0xd2,
@@ -335,8 +335,9 @@ var fileDescriptor_fe6f881da19a2871 = []byte{
 	0x30, 0xb2, 0x0d, 0x50, 0x87, 0x48, 0x89, 0xa0, 0x0a, 0x42, 0x0c, 0x57, 0x62, 0x10, 0x0a, 0xe4,
 	0xe2, 0x43, 0xf5, 0xa6, 0x90, 0x0c, 0xb2, 0x4a, 0xf4, 0x30, 0x94, 0x92, 0xc5, 0x21, 0x0b, 0x33,
 	0xd0, 0x80, 0x51, 0xc8, 0x89, 0x8b, 0x13, 0xee, 0x0d, 0x21, 0x71, 0xa8, 0x7a, 0xf4, 0x90, 0x91,
-	0x92, 0xc0, 0x94, 0x40, 0x98, 0xe1, 0xc4, 0x19, 0xc5, 0x0e, 0x4d, 0x8f, 0x49, 0x6c, 0xe0, 0xa4,
-	0x68, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff, 0x27, 0x24, 0x3f, 0xc4, 0xa7, 0x02, 0x00, 0x00,
+	0x92, 0xc0, 0x94, 0x80, 0x99, 0xa1, 0xc1, 0xe8, 0xc4, 0x19, 0xc5, 0x0e, 0x4d, 0x8f, 0x49, 0x6c,
+	0xe0, 0xa4, 0x68, 0x0c, 0x08, 0x00, 0x00, 0xff, 0xff, 0xbd, 0x3f, 0x29, 0xaa, 0xa7, 0x02, 0x00,
+	0x00,
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -356,7 +357,7 @@ type GreetServiceClient interface {
 	// Sever Streaming
 	GreetManyTimes(ctx context.Context, in *GreetManyTimesRequest, opts ...grpc.CallOption) (GreetService_GreetManyTimesClient, error)
 	// Client Streaming
-	LongGreet(ctx context.Context, in *LongGreetRequest, opts ...grpc.CallOption) (GreetService_LongGreetClient, error)
+	LongGreet(ctx context.Context, opts ...grpc.CallOption) (GreetService_LongGreetClient, error)
 }
 
 type greetServiceClient struct {
@@ -408,23 +409,18 @@ func (x *greetServiceGreetManyTimesClient) Recv() (*GreetManyTimesResponse, erro
 	return m, nil
 }
 
-func (c *greetServiceClient) LongGreet(ctx context.Context, in *LongGreetRequest, opts ...grpc.CallOption) (GreetService_LongGreetClient, error) {
+func (c *greetServiceClient) LongGreet(ctx context.Context, opts ...grpc.CallOption) (GreetService_LongGreetClient, error) {
 	stream, err := c.cc.NewStream(ctx, &_GreetService_serviceDesc.Streams[1], "/greet.GreetService/LongGreet", opts...)
 	if err != nil {
 		return nil, err
 	}
 	x := &greetServiceLongGreetClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
 	return x, nil
 }
 
 type GreetService_LongGreetClient interface {
-	Recv() (*LongGreetResponse, error)
+	Send(*LongGreetRequest) error
+	CloseAndRecv() (*LongGreetResponse, error)
 	grpc.ClientStream
 }
 
@@ -432,7 +428,14 @@ type greetServiceLongGreetClient struct {
 	grpc.ClientStream
 }
 
-func (x *greetServiceLongGreetClient) Recv() (*LongGreetResponse, error) {
+func (x *greetServiceLongGreetClient) Send(m *LongGreetRequest) error {
+	return x.ClientStream.SendMsg(m)
+}
+
+func (x *greetServiceLongGreetClient) CloseAndRecv() (*LongGreetResponse, error) {
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
 	m := new(LongGreetResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
@@ -447,7 +450,7 @@ type GreetServiceServer interface {
 	// Sever Streaming
 	GreetManyTimes(*GreetManyTimesRequest, GreetService_GreetManyTimesServer) error
 	// Client Streaming
-	LongGreet(*LongGreetRequest, GreetService_LongGreetServer) error
+	LongGreet(GreetService_LongGreetServer) error
 }
 
 // UnimplementedGreetServiceServer can be embedded to have forward compatible implementations.
@@ -460,7 +463,7 @@ func (*UnimplementedGreetServiceServer) Greet(ctx context.Context, req *GreetReq
 func (*UnimplementedGreetServiceServer) GreetManyTimes(req *GreetManyTimesRequest, srv GreetService_GreetManyTimesServer) error {
 	return status.Errorf(codes.Unimplemented, "method GreetManyTimes not implemented")
 }
-func (*UnimplementedGreetServiceServer) LongGreet(req *LongGreetRequest, srv GreetService_LongGreetServer) error {
+func (*UnimplementedGreetServiceServer) LongGreet(srv GreetService_LongGreetServer) error {
 	return status.Errorf(codes.Unimplemented, "method LongGreet not implemented")
 }
 
@@ -508,15 +511,12 @@ func (x *greetServiceGreetManyTimesServer) Send(m *GreetManyTimesResponse) error
 }
 
 func _GreetService_LongGreet_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(LongGreetRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(GreetServiceServer).LongGreet(m, &greetServiceLongGreetServer{stream})
+	return srv.(GreetServiceServer).LongGreet(&greetServiceLongGreetServer{stream})
 }
 
 type GreetService_LongGreetServer interface {
-	Send(*LongGreetResponse) error
+	SendAndClose(*LongGreetResponse) error
+	Recv() (*LongGreetRequest, error)
 	grpc.ServerStream
 }
 
@@ -524,8 +524,16 @@ type greetServiceLongGreetServer struct {
 	grpc.ServerStream
 }
 
-func (x *greetServiceLongGreetServer) Send(m *LongGreetResponse) error {
+func (x *greetServiceLongGreetServer) SendAndClose(m *LongGreetResponse) error {
 	return x.ServerStream.SendMsg(m)
+}
+
+func (x *greetServiceLongGreetServer) Recv() (*LongGreetRequest, error) {
+	m := new(LongGreetRequest)
+	if err := x.ServerStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 var _GreetService_serviceDesc = grpc.ServiceDesc{
@@ -546,7 +554,7 @@ var _GreetService_serviceDesc = grpc.ServiceDesc{
 		{
 			StreamName:    "LongGreet",
 			Handler:       _GreetService_LongGreet_Handler,
-			ServerStreams: true,
+			ClientStreams: true,
 		},
 	},
 	Metadata: "greet/greetpb/greet.proto",
