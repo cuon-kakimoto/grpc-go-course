@@ -40,7 +40,7 @@ service CalculatorService{
   // Sever Streaming
   rpc PrimeNumberDecomposition(PrimeNumberRequest) returns (stream PrimeNumberResponse){};
 
-    // Sever Streaming
+  // Client Streaming
   rpc ComputeAverage(stream ComputeAverageRequest) returns (ComputeAverageResponse){};
 
 }
