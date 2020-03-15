@@ -18,14 +18,12 @@ message CalculatorResponse{
 }
 
 message PrimeNumberRequest{
-  Calculator calculator = 1;
+  int64 number = 1;
 }
 
 message PrimeNumberResponse{
-  int32 result = 1;
+  int64 result = 1;
 }
-
-
 
 service CalculatorService{
   // Unary
