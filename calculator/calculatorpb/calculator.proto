@@ -1,22 +1,22 @@
 syntax = "proto3";
 
-package sum;
+package calculator;
 
-option go_package="sumpb";
+option go_package="calculatorpb";
 
-message Sum{
+message Calculator{
   int32 a = 1;
   int32 b = 2;
 }
 
-message SumRequest{
-  Sum sum = 1;
+message CalculatorRequest{
+  Calculator calculator = 1;
 }
 
-message SumResponse{
+message CalculatorResponse{
   int32 result = 1;
 }
-service SumService{
+service CalculatorService{
   // Unary
-  rpc Sum(SumRequest) returns (SumResponse){};
+  rpc Calculator(CalculatorRequest) returns (CalculatorResponse){};
 }

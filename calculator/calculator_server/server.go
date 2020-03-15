@@ -6,19 +6,19 @@ import (
 	"log"
 	"net"
 
-	"github.com/cuon-kakimoto/grpc-go-course/sum/sumpb"
+	"github.com/cuon-kakimoto/grpc-go-course/calculator/calculatorpb"
 	"google.golang.org/grpc"
 )
 
 type server struct{}
 
-func (*server) Sum(ctx context.Context, req *sumpb.SumRequest) (*sumpb.SumResponse, error) {
+func (*server) Calculator(ctx context.Context, req *calculatorpb.CalculatorRequest) (*calculatorpb.CalculatorResponse, error) {
 	fmt.Printf("Greet function was invoked with %w\n", req)
-	a := req.GetSum().GetA()
-	b := req.GetSum().GetB()
+	a := req.GetCalculator().GetA()
+	b := req.GetCalculator().GetB()
 
 	result := a + b
-	res := &sumpb.SumResponse{
+	res := &calculatorpb.CalculatorResponse{
 		Result: result,
 	}
 	return res, nil
@@ -34,7 +34,7 @@ func main() {
 
 	s := grpc.NewServer()
 
-	sumpb.RegisterSumServiceServer(s, &server{})
+	calculatorpb.RegisterCalculatorServiceServer(s, &server{})
 
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to server: %v", err)

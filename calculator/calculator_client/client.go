@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/cuon-kakimoto/grpc-go-course/sum/sumpb"
+	"github.com/cuon-kakimoto/grpc-go-course/calculator/calculatorpb"
 	"google.golang.org/grpc"
 )
 
@@ -19,21 +19,21 @@ func main() {
 
 	defer cc.Close()
 
-	c := sumpb.NewSumServiceClient(cc)
+	c := calculatorpb.NewCalculatorServiceClient(cc)
 	// fmt.Printf("Created client: %f", c)
 
 	doUnary(c)
 }
 
-func doUnary(c sumpb.SumServiceClient) {
+func doUnary(c calculatorpb.CalculatorServiceClient) {
 
-	req := &sumpb.SumRequest{
-		Sum: &sumpb.Sum{
+	req := &calculatorpb.CalculatorRequest{
+		Calculator: &calculatorpb.Calculator{
 			A: 10,
 			B: 3,
 		},
 	}
-	res, err := c.Sum(context.Background(), req)
+	res, err := c.Calculator(context.Background(), req)
 
 	if err != nil {
 		log.Fatalf("error while calling Greeet RPC: %v", err)
