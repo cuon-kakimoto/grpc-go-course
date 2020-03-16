@@ -112,6 +112,7 @@ func doClientStreaming(c calculatorpb.CalculatorServiceClient) {
 
 }
 
+// 並行処理で処理できるのが利点?
 func doBiDiStreaming(c calculatorpb.CalculatorServiceClient) {
 	fmt.Println("Starting to do a BiDi Streming RPC...")
 
