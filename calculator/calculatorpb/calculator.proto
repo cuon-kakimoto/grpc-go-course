@@ -65,6 +65,6 @@ service CalculatorService{
   // error handling
   // this RPC will throw an exception if the sent number is negative
   // The error being sent is of type INVALID_ARGUMENT
-  rpc SquareRoot(stream SquareRootRequest) returns (stream SquareRootResponse){};
+  rpc SquareRoot(SquareRootRequest) returns (SquareRootResponse){};
 
 }
