@@ -39,5 +39,5 @@ message UpdateBlogResponse{
 service BlogService{
   rpc CreateBlog(CreateBlogRequest) returns (CreateBlogResponse);
   rpc ReadBlog(ReadBlogRequest) returns(ReadBlogResponse); // reutrn NOT_FOUND if not found
-  rpc UpdateBlog(UpdateBlogRequest) returns(UpdateBlogRequest);
+  rpc UpdateBlog(UpdateBlogRequest) returns(UpdateBlogResponse);
 }
