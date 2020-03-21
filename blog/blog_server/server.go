@@ -32,6 +32,7 @@ type blogItem struct {
 }
 
 func (*server) CreateBlog(ctx context.Context, req *blogpb.CreateBlogRequest) (*blogpb.CreateBlogResponse, error) {
+	fmt.Println("Creating Blog...")
 	blog := req.GetBlog()
 
 	data := blogItem{
@@ -39,16 +40,18 @@ func (*server) CreateBlog(ctx context.Context, req *blogpb.CreateBlogRequest) (*
 		Title:    blog.GetTitle(),
 		Content:  blog.GetContent(),
 	}
+
+	fmt.Println("Inserting Blog...")
 	res, err := collection.InsertOne(context.Background(), data)
 	if err != nil {
 		return nil, status.Errorf(
 			codes.Internal,
-			fmt.Sprintf("Internal error: %w", err),
+			fmt.Sprintf("Internal error: %v", err),
 		)
 	}
 
+	fmt.Println("Creating Blog ID...")
 	oid, ok := res.InsertedID.(primitive.ObjectID)
-
 	if !ok {
 		return nil, status.Errorf(
 			codes.Internal,
@@ -83,6 +86,7 @@ func main() {
 	}
 
 	collection = client.Database("mydb").Collection("blog")
+	// fmt.Println("Collection type:", reflect.TypeOf(collection), "\n")
 
 	fmt.Println("Blog Service Started")
 	lis, err := net.Listen("tcp", "0.0.0.0:50051")
